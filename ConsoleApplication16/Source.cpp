@@ -2,7 +2,6 @@
 using namespace std;
 double** AllocMemory(int);
 double Sin(double, double);
-double Formula1(int, int, double, double);
 double Formula2(int, int);
 double MaxDifference(double**, double**, int);
 int EnterDimention(int);
@@ -10,7 +9,7 @@ void CreatMatrix1(double**, int, double);
 void CreatMatrix2(double**, int);
 int main()
 {
-	int n = 900;
+	int n = 100;
 	double eps;
 	cout << "Enter the size of matrix:\n";
 	n = EnterDimention(n);
@@ -33,7 +32,7 @@ int EnterDimention(int n)
 		cin >> k;
 		if (k > 0 && k <= n)
 			return k;
-		cout << "0<k<900" << endl;
+		cout << "0<k<100" << endl;
 	}
 }
 double MaxDifference(double** matrix1, double** matrix2, int n)
@@ -42,10 +41,10 @@ double MaxDifference(double** matrix1, double** matrix2, int n)
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
 		{
-			if (max < fabs(matrix1[i][j] - matrix2[i][j]))
-			{
-				max = fabs(matrix1[i][j] - matrix2[i][j]);
-			}
+		if (max < fabs(matrix1[i][j] - matrix2[i][j]))
+		{
+			max = fabs(matrix1[i][j] - matrix2[i][j]);
+		}
 		}
 	return max;
 }
@@ -60,29 +59,17 @@ double Formula2(int i, int j)
 	return a;
 }
 
-double Formula1(int i, int j, double eps)
-{
-	double a;
-	if (i == j)a = 1;
-	else
-	{
-		a = (Sin(i + j, eps) - Sin(i - j, eps)) / pow((i + j + 1), 2);
-	}
-	return a;
-}
+
 double Sin(double x, double eps)
 {
 	double sum = 0;
-	int k = 1;
-	int l = 1;
-	double s = 1;
-	for (int n = 1; eps < s;)
+	double An = x;
+	int n = 0;
+	while (eps < fabs(An))
 	{
-		sum += k*x / l;
-		s = x / l;
-		n += 2;
-		l *= n*(n - 1);
-		k = -k;
+		sum += An;
+		n++;
+		An *= (-1)*x*x / (2 * n + 1) / (2 * n);
 	}
 
 
@@ -90,15 +77,33 @@ double Sin(double x, double eps)
 }
 void CreatMatrix1(double** matrix, int n, double eps)
 {
+	double pi = 3.14159265359;
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
-			matrix[i][j] = Formula1(i + 1, j + 1, eps);
+		{
+		if (i == j)
+			matrix[i][j] = 1;
+		else
+		{
+			double k = i + j, l = i - j;
+			while (k > pi)
+				k -= 2 * pi;
+			while (l > pi)
+				l -= 2 * pi;
+			while (k < (-1)* pi)
+				k += 2 * pi;
+			while (l < (-1)* pi)
+				l += 2 * pi;
+			matrix[i][j] = (Sin(k, eps) - Sin(l, eps)) / ((i + j + 1) * (i + j + 1));
+		}
+
+		}
 }
 void CreatMatrix2(double** matrix, int n)
 {
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
-			matrix[i][j] = Formula2(i + 1, j + 1);
+			matrix[i][j] = Formula2(i, j);
 }
 double** AllocMemory(int n)
 {
@@ -107,5 +112,4 @@ double** AllocMemory(int n)
 		matrix[i] = new double[n];
 	return matrix;
 }
-
 
